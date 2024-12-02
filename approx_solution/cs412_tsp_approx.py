@@ -20,24 +20,6 @@
 # of your program (for example, output wall clock timings or override the runtime for 
 # an anytime approach).
 
-
-
-
-
-
-# same inputs on min spanning tree and then analysis. good for error bounding. 
-# Know that answer might not be completely right, but you know how much it can be wrong by
-#     may have to create a whole bunch of test cases. 
-#     run lower lound and approx solution on a bunch of test cases that the exact solution will not run on.
-
-
-
-# add lightest remaining edge that isnt in the mst after it completes. needs enough edges to make full cycle. 
-# changes from v-1 to v. look up mst approx for tsp. 
-# you add lightest because you dont actually know which one to add and this is a lower bound
-
-
-
 # start at random nodes and run a greedy approach. 
 # repeat this multiple times while under a certain time limit and return the best greedy approach.
 
