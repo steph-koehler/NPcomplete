@@ -72,10 +72,17 @@ def rand_tour(graph, map) :  # generate the first random tour
 
 
 def adjust(tour) :  # parameter is the output of rand_tour()
+    idk = 20 # change this to be the number of needed small adjstments. make this greedy (till finds the best adjustment)
+    for _ in range(idk) : #making "idk" number of small adjustments
+            # compare to best weight and update accordingly (if updated, save that tour as best)
+        pass
     # make small adjustments
     # should these adjustments be random?
 
     #return updated tour and the resulting updated weight
+
+
+    # the improvement is swapping vertices. make sure best swap.
     pass
 
 
@@ -103,14 +110,14 @@ def main():  # change this so that the input is in a file.
     # should i generate multiple random tours and then make small adjustments to all of them? nested for loops?
     # the for loop must be less than n (the num of nodes in the graph) (probably significantly less, otherwise not polynomial). 
     # small adjustments loop can be bigger index
-    tour = None  # change this--tour is the output of rand_tour
-    rand_tour(graph, rev_map)  # generate a random tour
-    
-    idk = 100
-    for _ in range(idk) : #making "idk" number of small adjustments
-        # compare to best weight and update accordingly (if updated, save that tour as best)
+    idk = 20  # might need to change (def change the name)
+    for _ in range(idk) :
+        tour = None  # change this--tour is the output of rand_tour
+        rand_tour(graph, rev_map)  # generate a random tour
         adjust(tour) #change this to separate getting random edges and getting random starting values ?
 
     
+# n^2 vertex swaps total. see which ones offer most improvement
+
 if __name__ == '__main__':
     main()
