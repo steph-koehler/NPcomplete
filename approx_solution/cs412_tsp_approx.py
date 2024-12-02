@@ -27,3 +27,16 @@
 
 
 # way to prove: known that not-complete graph is np-complete. how can you prove that a complete graph is also np-complete. you can add edges with infinite weight. Not used for this tho 
+
+# Ask:
+# is the difference that i repeat multiple times using a random starting point each time and select the best
+# and macy runs it once using a given starting node?
+
+
+# dont use 
+
+# start at vert a and end at a, 
+
+# use iterative improvement. make small changes at a time. just see if making random changes make the cost better. there are k^2 swaps.else
+# drives down to some minimum value. 
+# pick a set amount of time that we will be runnign this over. Drop enough random starts.
