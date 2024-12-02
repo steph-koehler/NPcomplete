@@ -40,3 +40,8 @@
 
 # start at random nodes and run a greedy approach. 
 # repeat this multiple times while under a certain time limit and return the best greedy approach.
+
+# input will always be a complete graph
+
+
+# way to prove: known that not-complete graph is np-complete. how can you prove that a complete graph is also np-complete. you can add edges with infinite weight. Not used for this tho 
