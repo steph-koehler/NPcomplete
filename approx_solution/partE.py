@@ -18,6 +18,7 @@
     # how to analyze the outcome? how does it compare to the output of the approx. solution?
 
 import math
+import sys
 
 
 def dfs_preorder(tree, node, visited, path):
@@ -84,12 +85,14 @@ def tsp_approx(graph, rev_map):
 
 
 def main():
-    vertices, edges = map(int, input().strip().split())
+    data = sys.stdin.read().strip().split("\n")
+    vertices, edges = map(int, data[0].strip().split())
     graph = {i: {} for i in range(vertices)}
     vertex_map = {}
     rev_map = {}
-    for _ in range(edges):
-        u, v, weight = input().strip().split()
+
+    for line in data[1:]:
+        u, v, weight = line.strip().split()
         weight = float(weight)
         if u not in vertex_map:
             vertex_map[u] = len(vertex_map)
