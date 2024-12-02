@@ -41,9 +41,41 @@
 # pick a set amount of time that we will be runnign this over. Drop enough random starts.
 
 
-def gen_rand(graph, map) :
-    #get random starting value from the map
-    #pick random edges
+# use simulated annealing
+# How it works:
+# Start with a random solution (tour) and iteratively make small random modifications.
+# If a new solution has a shorter path, accept it.
+# If it's worse, accept it with a probability that decreases over time.
+# Why it works:
+# It balances exploration (finding new paths) and exploitation (improving on known paths).
+# Key Parameters:
+# Initial temperature
+# Cooling schedule (how the probability of accepting worse solutions decreases over iterations).
+
+
+def rand_tour(graph, map) :  # generate the first random tour
+    # for loop with ranging till all nodes (+1 maybe)
+    # within for loop add the start (u) to the tour
+    # select a random edge going out from that node.
+    # add the resulting v to the tour
+    # output the tour
+
+    # u = random starting node
+    # total weight = 0
+    # for loop (index up to number of edges (+1 maybe))  # runs n times
+        # add u to the tour
+        # select a random edge leaving u (random pick from map at u)
+        # add that edge weight to the totalweight
+        # u = v
+    #return tour, totalweight
+    pass
+
+
+def adjust(tour) :  # parameter is the output of rand_tour()
+    # make small adjustments
+    # should these adjustments be random?
+
+    #return updated tour and the resulting updated weight
     pass
 
 
@@ -65,9 +97,19 @@ def main():  # change this so that the input is in a file.
         graph[u_idx][v_idx] = weight  # adds the weights to the graph. (makes the graph basically)
         graph[v_idx][u_idx] = weight  # weights in both directions. seen in adjacency list
     
+    best_weight = float('inf')  # looking for lowest weight
+    best_tour = None  # change from None obviously.
+
+    # should i generate multiple random tours and then make small adjustments to all of them? nested for loops?
+    # the for loop must be less than n (the num of nodes in the graph) (probably significantly less, otherwise not polynomial). 
+    # small adjustments loop can be bigger index
+    tour = None  # change this--tour is the output of rand_tour
+    rand_tour(graph, rev_map)  # generate a random tour
+    
     idk = 100
-    for _ in range(idk) :  #dropping the different starting points.
-        gen_rand(graph, rev_map) #change this to separate getting random edges and getting random starting values ?
+    for _ in range(idk) : #making "idk" number of small adjustments
+        # compare to best weight and update accordingly (if updated, save that tour as best)
+        adjust(tour) #change this to separate getting random edges and getting random starting values ?
 
     
 if __name__ == '__main__':
