@@ -19,7 +19,38 @@
 
 import math
 import sys
+import time
+import random
+import statistics
 
+def restarts(graph, rev_map, num_restarts=10):
+    costs = []
+    best_cost = float('inf')
+    best_path = None
+    start_time = time.time()
+
+    for i in range(num_restarts):
+        # randomize starting conditions
+        randomized_graph = {k: v.copy() for k, v in graph.items()}
+        for u in randomized_graph:
+            for v in randomized_graph[u]:
+                randomized_graph[u][v] *= random.uniform(0.95, 1.05) # slight weight variation
+
+        # run approximation
+        path, cost = tsp_approx(randomized_graph, rev_map, return_results=True)
+        costs.append(cost)
+
+        if cost < best_cost:
+            best_cost = cost
+            best_path = path
+        
+        # log progress
+        total_time = time.time() - start_time
+        print(f"Restart {i + 1}: Cost = {cost:.4f}, Best Cost = {best_cost:.4f}, Time Elapsed = {total_time:.2f}s")
+    
+    # Calculate variance and return results
+    variance = statistics.variance(costs) if len(costs) > 1 else 0
+    return best_cost, best_path, costs, variance
 
 def dfs_preorder(tree, node, visited, path):
     visited[node] = True
@@ -53,7 +84,7 @@ def primMst(graph, n):
                 parent[v] = u
     return parent
 
-def tsp_approx(graph, rev_map):
+def tsp_approx(graph, rev_map, return_results=False):
     n = len(graph)
     parent = primMst(graph, n)
 
@@ -73,15 +104,33 @@ def tsp_approx(graph, rev_map):
     path.append(path[0])
 
     # calculate total cost of path
-    cost = 0
-    for i in range(len(path) - 1):
-        cost += graph[path[i]][path[i + 1]]
+    cost = sum(graph[path[i]][path[i + 1]] for i in range(len(path) - 1))
+
+    if return_results:
+        return path, cost
 
     # print cost rounded to 4 decimal places
     print(f"{cost:.4f}")
 
     # print order of stops visited
     print(" ".join(rev_map[v] for v in path))
+
+import matplotlib.pyplot as plt
+
+def plot_results(costs, best_cost, variance, filename="tsp_plot.png"):
+    plt.figure(figsize=(10, 6))
+    plt.plot(costs, marker='o', label='Costs per Restart')
+    plt.axhline(y=best_cost, color='r', linestyle='--', label=f'Best Cost ({best_cost:.4f})')
+    plt.title(f'TSP MST Approximation: Cost vs Restarts\nVariance = {variance:.4f}')
+    plt.xlabel('Restart Iteration')
+    plt.ylabel('Cost')
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+    plt.savefig(filename)
+    print(f"Plot saved to {filename}")
+
 
 
 def main():
@@ -104,8 +153,11 @@ def main():
         graph[u_idx][v_idx] = weight
         graph[v_idx][u_idx] = weight
     
-    tsp_approx(graph, rev_map)
+    best_cost, best_path, costs, variance = restarts(graph, rev_map)
+    print(f"Best Cost: {best_cost:.4f}")
+    print("Best Path:", " -> ".join(rev_map[v] for v in best_path))
 
+    plot_results(costs, best_cost, variance, filename='tsp_plot2.png')
     
 if __name__ == '__main__':
     main()
