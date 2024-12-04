@@ -1,0 +1,6 @@
+3 3
+a b 3.0
+b c 4.2
+a c 5.4
+
+ < /Users/steph/Documents/Fall2024/CS412/finalProj/NPcomplete/approx_solution/test2.txt  

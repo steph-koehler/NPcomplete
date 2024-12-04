@@ -53,12 +53,15 @@
 # Cooling schedule (how the probability of accepting worse solutions decreases over iterations).
 import random
 import math
+import sys
 
 
 def rand_tour(graph, rev_map) :  # generate the first random tour
-    vertices = list(graph.keys())
+    vertices = list(graph)
     start = random.choice(vertices)
+    # print(start)
     tour = [start]
+    # print(f"Tour: {tour}")
     total_weight = 0
     current = start
 
@@ -74,6 +77,10 @@ def rand_tour(graph, rev_map) :  # generate the first random tour
     # return to the starting node to complete the cycle
     total_weight += graph[current][start]
     tour.append(start)
+    # print(f"Tour: {tour}")
+    mapped_tour = [rev_map[vertex] for vertex in tour]  # Map numeric indices to vertex names
+    # print(f"Mapped Tour: {mapped_tour}")
+
     return tour, total_weight
 
     # u = random starting node
@@ -84,9 +91,8 @@ def rand_tour(graph, rev_map) :  # generate the first random tour
         # add that edge weight to the totalweight
         # u = v
     #return tour, totalweight
-    pass
 
-
+""" 
 def adjust(tour, graph, weight, vertices) :  # parameter is the output of rand_tour()
     # n^2 vertex swaps total. see which ones offer most improvement
     # make small adjustments
@@ -95,34 +101,83 @@ def adjust(tour, graph, weight, vertices) :  # parameter is the output of rand_t
     best_tour = tour[:]
     best_weight = weight
 
-    for outerind in range(vertices) : 
-            for innerind in range(vertices) :
+    for outerind in range(vertices) :  # fix these
+            for innerind in range(vertices - 1) :
                 # compare to best weight and update accordingly (if updated, save that tour as best)
-                if outerind != innerind :
+                if (outerind != innerind):
                     new_tour = tour[:]
                     new_tour[outerind], new_tour[innerind] = new_tour[innerind], new_tour[outerind]
+
                     new_weight = calculate_tour_weight(new_tour, graph) #might need to be fixed
                     if new_weight < best_weight:
                         best_tour = new_tour
                         best_weight = new_weight
 
     return best_tour, best_weight
+"""
+
+def adjust(tour, graph, weight, vertices):
+    # Perform edge swaps (2-opt optimization) to find a better tour
+    best_tour = tour[:]
+    best_weight = weight
+    improved = True
+
+    while improved:
+        improved = False
+        for i in range(1, len(tour) - 2):  # Avoid the start and end points
+            for j in range(i + 1, len(tour) - 1):
+                # Generate a new tour by reversing the segment between edges i and j
+                new_tour = best_tour[:i] + best_tour[i:j+1][::-1] + best_tour[j+1:]
+                new_weight = calculate_tour_weight(new_tour, graph)
+
+                # Check if the new tour is better
+                if new_weight < best_weight:
+                    best_tour = new_tour
+                    best_weight = new_weight
+                    improved = True
+
+    return best_tour, best_weight
+
+
 
 
 def calculate_tour_weight(tour, graph):
     weight = 0
+    # print(f"Tour: {tour}")
+    # print(f"Graph: {graph}")
     for i in range(len(tour) - 1):
-        weight += graph[tour[i]][tour[i + 1]]
+        u = tour[i]
+        v = tour[i + 1]
+        if u not in graph or v not in graph[u]:
+            raise ValueError(f"Invalid edge ({u}, {v}) in the tour.")
+        weight += graph[u][v]
     return weight
 
 
 def main():  # change this so that the input is in a file.
-    vertices, edges = map(int, input().strip().split())  # assigns ints to vertices and edges
+    data = sys.stdin.read().strip().split("\n")
+    vertices, edges = map(int, data[0].strip().split())  # First line: vertices and edges
     graph = {i: {} for i in range(vertices)}
-    vertex_map = {} 
+    vertex_map = {}
     rev_map = {}
-    for _ in range(edges):  # for every edge
-        u, v, weight = input().strip().split()  # from node, to node, edge weight
+
+    #file_name = 'approx_solution/test2.txt'  # File to read inputs from
+
+    #with open(file_name, 'r') as file:
+        #vertices, edges = map(int, file.readline().strip().split())  # First line: vertices and edges
+        #graph = {i: {} for i in range(vertices)}
+        #vertex_map = {}
+        #rev_map = {}
+
+        # vertices, edges = map(int, input().strip().split())  # assigns ints to vertices and edges
+        # graph = {i: {} for i in range(vertices)}
+        # vertex_map = {} 
+        # rev_map = {}
+    for line in data[1:]:  # for every edge
+        u, v, weight = line.strip().split()  # from node, to node, edge weight
+        # print(f"u: {u}")
+        # print(f"v: {v}")
+        # print(f"weight: {weight}")
         weight = float(weight)
         if u not in vertex_map:
             vertex_map[u] = len(vertex_map)  # maps from node, index of the from node
@@ -134,10 +189,14 @@ def main():  # change this so that the input is in a file.
         graph[u_idx][v_idx] = weight  # adds the weights to the graph. (makes the graph basically)
         graph[v_idx][u_idx] = weight  # weights in both directions. seen in adjacency list
     
+    # print(f"Graph: {graph}")
+    # print(f"vertex_map: {vertex_map}")
+    # print(f"rev_map: {rev_map}")
+
     best_weight = float('inf')  # looking for lowest weight
     best_tour = None  # change from None obviously.
 
-    idk = 20  # might need to change value (def change the name)
+    idk = 3  # might need to change value (def change the name)
     if idk > vertices :
         idk = vertices
     for _ in range(idk) :
@@ -147,10 +206,13 @@ def main():  # change this so that the input is in a file.
             best_weight = weight
             best_tour = tour  # the best adjusted tour with every random start
 
-    #print the best tour
-    for vertex in best_tour:
-        print(vertex)
-    print(best_weight)
+
+    print(f"{best_weight:.4f}")
+    # print the best tour
+    # print(f"Tour: {best_tour}")
+    mapped_tour = [rev_map[vertex] for vertex in best_tour]  # Map numeric indices to vertex names
+    # print(f"Mapped Tour: {mapped_tour}")
+    print(' '.join(mapped_tour))
 
 
 if __name__ == '__main__':
