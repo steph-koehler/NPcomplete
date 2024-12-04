@@ -23,10 +23,11 @@ import time
 import random
 import statistics
 
-def restarts(graph, rev_map, num_restarts=10):
+def restarts(graph, rev_map, num_restarts=10, stag_limit=5):
     costs = []
     best_cost = float('inf')
     best_path = None
+    time_quality = [] # (time, best_cost)
     start_time = time.time()
 
     for i in range(num_restarts):
@@ -37,20 +38,36 @@ def restarts(graph, rev_map, num_restarts=10):
                 randomized_graph[u][v] *= random.uniform(0.95, 1.05) # slight weight variation
 
         # run approximation
-        path, cost = tsp_approx(randomized_graph, rev_map, return_results=True)
-        costs.append(cost)
+        stag_count = 0
+        current_best_cost = float('inf')
+        for _ in range(stag_limit):
+            path, cost = tsp_approx(randomized_graph, rev_map, return_results=True)
+            if cost < current_best_cost:
+                current_best_cost = cost
+                stag_count = 0
+            else:
+                stag_count += 1
+            
+            elapsed_time = time.time() - start_time
+            time_quality.append((elapsed_time, current_best_cost))
 
-        if cost < best_cost:
-            best_cost = cost
+            if stag_count >= stag_limit:
+                print(f"Local min detected. Restarting after {stag_count} iterations.")
+                break
+                
+        costs.append(current_best_cost)
+
+        if current_best_cost < best_cost:
+            best_cost = current_best_cost
             best_path = path
         
         # log progress
         total_time = time.time() - start_time
-        print(f"Restart {i + 1}: Cost = {cost:.4f}, Best Cost = {best_cost:.4f}, Time Elapsed = {total_time:.2f}s")
+        print(f"Restart {i + 1}: Cost = {current_best_cost:.4f}, Best Cost = {best_cost:.4f}, Time Elapsed = {total_time:.2f}s")
     
     # Calculate variance and return results
     variance = statistics.variance(costs) if len(costs) > 1 else 0
-    return best_cost, best_path, costs, variance
+    return best_cost, best_path, costs, variance, time_quality
 
 def dfs_preorder(tree, node, visited, path):
     visited[node] = True
@@ -117,13 +134,15 @@ def tsp_approx(graph, rev_map, return_results=False):
 
 import matplotlib.pyplot as plt
 
-def plot_results(costs, best_cost, variance, filename="tsp_plot.png"):
+def plot_results(time_quality, best_cost, variance, filename="tsp_plot.png"):
+    times, qualities = zip(*time_quality)
+
     plt.figure(figsize=(10, 6))
-    plt.plot(costs, marker='o', label='Costs per Restart')
-    plt.axhline(y=best_cost, color='r', linestyle='--', label=f'Best Cost ({best_cost:.4f})')
-    plt.title(f'TSP MST Approximation: Cost vs Restarts\nVariance = {variance:.4f}')
-    plt.xlabel('Restart Iteration')
-    plt.ylabel('Cost')
+    plt.plot(times, qualities, marker='o', label='Best Cost Over Time')
+    plt.axhline(y=best_cost, color='r', linestyle='--', label=f'Final Best Cost ({best_cost:.4f})')
+    plt.title(f'TSP MST Approximation: Quality vs Time\nVariance = {variance:.4f}')
+    plt.xlabel('Time (seconds)')
+    plt.ylabel('Cost (Quality)')
     plt.legend()
     plt.grid()
     plt.show()
@@ -153,11 +172,11 @@ def main():
         graph[u_idx][v_idx] = weight
         graph[v_idx][u_idx] = weight
     
-    best_cost, best_path, costs, variance = restarts(graph, rev_map)
+    best_cost, best_path, costs, variance , time_quality = restarts(graph, rev_map)
     print(f"Best Cost: {best_cost:.4f}")
     print("Best Path:", " -> ".join(rev_map[v] for v in best_path))
 
-    plot_results(costs, best_cost, variance, filename='tsp_plot2.png')
+    plot_results(time_quality, best_cost, variance, filename='time-quality.png')
     
 if __name__ == '__main__':
     main()
