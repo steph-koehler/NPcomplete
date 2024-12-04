@@ -176,7 +176,7 @@ def main():
     print(f"Best Cost: {best_cost:.4f}")
     print("Best Path:", " -> ".join(rev_map[v] for v in best_path))
 
-    plot_results(time_quality, best_cost, variance, filename='time-quality.png')
+    plot_results(time_quality, best_cost, variance, filename='plot.png')
     
 if __name__ == '__main__':
     main()
