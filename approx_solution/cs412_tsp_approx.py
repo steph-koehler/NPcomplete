@@ -51,14 +51,30 @@
 # Key Parameters:
 # Initial temperature
 # Cooling schedule (how the probability of accepting worse solutions decreases over iterations).
+import random
+import math
 
 
-def rand_tour(graph, map) :  # generate the first random tour
-    # for loop with ranging till all nodes (+1 maybe)
-    # within for loop add the start (u) to the tour
-    # select a random edge going out from that node.
-    # add the resulting v to the tour
-    # output the tour
+def rand_tour(graph, rev_map) :  # generate the first random tour
+    vertices = list(graph.keys())
+    start = random.choice(vertices)
+    tour = [start]
+    total_weight = 0
+    current = start
+
+    while len(tour) < len(graph):
+        neighbors = list(graph[current].items())
+        random_edge = random.choice(neighbors)
+        next, weight = random_edge
+        if next not in tour:
+            tour.append(next)
+            total_weight += weight
+            current = next
+
+    # return to the starting node to complete the cycle
+    total_weight += graph[current][start]
+    tour.append(start)
+    return tour, total_weight
 
     # u = random starting node
     # total weight = 0
@@ -71,19 +87,33 @@ def rand_tour(graph, map) :  # generate the first random tour
     pass
 
 
-def adjust(tour) :  # parameter is the output of rand_tour()
-    idk = 20 # change this to be the number of needed small adjstments. make this greedy (till finds the best adjustment)
-    for _ in range(idk) : #making "idk" number of small adjustments
-            # compare to best weight and update accordingly (if updated, save that tour as best)
-        pass
+def adjust(tour, graph, weight, vertices) :  # parameter is the output of rand_tour()
+    # n^2 vertex swaps total. see which ones offer most improvement
     # make small adjustments
-    # should these adjustments be random?
-
-    #return updated tour and the resulting updated weight
-
-
     # the improvement is swapping vertices. make sure best swap.
-    pass
+    
+    best_tour = tour[:]
+    best_weight = weight
+
+    for outerind in range(vertices) : 
+            for innerind in range(vertices) :
+                # compare to best weight and update accordingly (if updated, save that tour as best)
+                if outerind != innerind :
+                    new_tour = tour[:]
+                    new_tour[outerind], new_tour[innerind] = new_tour[innerind], new_tour[outerind]
+                    new_weight = calculate_tour_weight(new_tour, graph) #might need to be fixed
+                    if new_weight < best_weight:
+                        best_tour = new_tour
+                        best_weight = new_weight
+
+    return best_tour, best_weight
+
+
+def calculate_tour_weight(tour, graph):
+    weight = 0
+    for i in range(len(tour) - 1):
+        weight += graph[tour[i]][tour[i + 1]]
+    return weight
 
 
 def main():  # change this so that the input is in a file.
@@ -107,17 +137,21 @@ def main():  # change this so that the input is in a file.
     best_weight = float('inf')  # looking for lowest weight
     best_tour = None  # change from None obviously.
 
-    # should i generate multiple random tours and then make small adjustments to all of them? nested for loops?
-    # the for loop must be less than n (the num of nodes in the graph) (probably significantly less, otherwise not polynomial). 
-    # small adjustments loop can be bigger index
-    idk = 20  # might need to change (def change the name)
+    idk = 20  # might need to change value (def change the name)
+    if idk > vertices :
+        idk = vertices
     for _ in range(idk) :
-        tour = None  # change this--tour is the output of rand_tour
-        rand_tour(graph, rev_map)  # generate a random tour
-        adjust(tour) #change this to separate getting random edges and getting random starting values ?
+        tour, weight = rand_tour(graph, rev_map)  # generate a random tour
+        tour, weight = adjust(tour, graph, weight, vertices)  # tour is now the best tour after the adjustments.
+        if weight < best_weight : 
+            best_weight = weight
+            best_tour = tour  # the best adjusted tour with every random start
 
-    
-# n^2 vertex swaps total. see which ones offer most improvement
+    #print the best tour
+    for vertex in best_tour:
+        print(vertex)
+    print(best_weight)
+
 
 if __name__ == '__main__':
     main()
