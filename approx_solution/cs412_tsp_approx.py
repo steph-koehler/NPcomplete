@@ -92,29 +92,6 @@ def rand_tour(graph, rev_map) :  # generate the first random tour
         # u = v
     #return tour, totalweight
 
-""" 
-def adjust(tour, graph, weight, vertices) :  # parameter is the output of rand_tour()
-    # n^2 vertex swaps total. see which ones offer most improvement
-    # make small adjustments
-    # the improvement is swapping vertices. make sure best swap.
-    
-    best_tour = tour[:]
-    best_weight = weight
-
-    for outerind in range(vertices) :  # fix these
-            for innerind in range(vertices - 1) :
-                # compare to best weight and update accordingly (if updated, save that tour as best)
-                if (outerind != innerind):
-                    new_tour = tour[:]
-                    new_tour[outerind], new_tour[innerind] = new_tour[innerind], new_tour[outerind]
-
-                    new_weight = calculate_tour_weight(new_tour, graph) #might need to be fixed
-                    if new_weight < best_weight:
-                        best_tour = new_tour
-                        best_weight = new_weight
-
-    return best_tour, best_weight
-"""
 
 def adjust(tour, graph, weight, vertices):
     # Perform edge swaps (2-opt optimization) to find a better tour
@@ -196,10 +173,10 @@ def main():  # change this so that the input is in a file.
     best_weight = float('inf')  # looking for lowest weight
     best_tour = None  # change from None obviously.
 
-    idk = 3  # might need to change value (def change the name)
-    if idk > vertices :
-        idk = vertices
-    for _ in range(idk) :
+    start_graph = 10  # might need to change value (def change the name)
+    if start_graph > vertices :
+        start_graph = vertices
+    for _ in range(start_graph) :
         tour, weight = rand_tour(graph, rev_map)  # generate a random tour
         tour, weight = adjust(tour, graph, weight, vertices)  # tour is now the best tour after the adjustments.
         if weight < best_weight : 
