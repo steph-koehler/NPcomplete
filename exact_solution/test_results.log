@@ -29,3 +29,13 @@ g i b c d a h e f g
 f c d i h b j g a e f
 
 [0;34mNumber of nodes: 11, Permutations: 39916800[0m
+[0;32mFinished test case: test_cases/11_nodes.txt. Runtime: 39 seconds.[0m
+25.6000
+f a j b e k d i h g c f
+
+[0;34mNumber of nodes: 12, Permutations: 479001600[0m
+[0;32mFinished test case: test_cases/12_nodes.txt. Runtime: 514 seconds.[0m
+29.9000
+j i h c b a e d k g f l j
+
+[0;34mNumber of nodes: 13, Permutations: 6227020800[0m

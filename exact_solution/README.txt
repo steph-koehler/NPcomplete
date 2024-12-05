@@ -1,18 +1,24 @@
 Exact Solution for the Traveling Salesman Problem (TSP)
 =======================================================
 
-This folder contains an exact solution to the Traveling Salesman Problem using a brute-force approach.
+This folder contains a brute-force solution to the TSP, 
+which finds the shortest route visiting all cities exactly once.
 
-Files:
-- tsp_exact_solution.py: Main Python program.
-- run_test_cases.sh: Shell script to execute test cases.
-- test_cases/: Folder containing test case files.
+Files
+- cs412_tsp_exact.py: Main program.
+- run_test_cases.sh: Shell script to run all test cases.
+- test_cases/: Folder with test case files.
+- test_results.log: Log of results after running test cases.
 
-How to run:
-1. Ensure you have Python 3 installed.
-2. Navigate to the 'exact_solution' directory.
-3. Execute the shell script to run all test cases:
+How to Run
+==========
+
+Run All Test Cases
    ./run_test_cases.sh
+- Calculates permutations for each test case.
+- Logs runtime and results in test_results.log.
+- Flags test cases exceeding 20 minutes.
 
-To run an individual test case:
-   python3 tsp_exact_solution.py test_cases/<test_case_file>
+Run a Single Test Case
+   python3 cs412_tsp_exact.py < test_cases/<test_case_file>
+
