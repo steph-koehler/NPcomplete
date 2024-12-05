@@ -1,8 +1,31 @@
-[0;32mFinished test case: test_cases/10_nodes.txt. Runtime: 1 seconds.[0m
-29.7000
-i h g f e d c b a j i
+[0;34mNumber of nodes: 3, Permutations: 6[0m
+[0;32mFinished test case: test_cases/03_nodes.txt. Runtime: 0 seconds.[0m
+12.6000
+a c b a
 
-[0;32mFinished test case: test_cases/11_nodes.txt. Runtime: 6 seconds.[0m
-31.4000
-b c d e f g h i j k a b
+[0;34mNumber of nodes: 6, Permutations: 720[0m
+[0;32mFinished test case: test_cases/06_nodes.txt. Runtime: 0 seconds.[0m
+14.0000
+b a f e d c b
 
+[0;34mNumber of nodes: 7, Permutations: 5040[0m
+[0;32mFinished test case: test_cases/07_nodes.txt. Runtime: 0 seconds.[0m
+17.1000
+a e d b c f g a
+
+[0;34mNumber of nodes: 8, Permutations: 40320[0m
+[0;32mFinished test case: test_cases/08_nodes.txt. Runtime: 0 seconds.[0m
+18.1000
+f e a b c d h g f
+
+[0;34mNumber of nodes: 9, Permutations: 362880[0m
+[0;32mFinished test case: test_cases/09_Nodes.txt. Runtime: 0 seconds.[0m
+20.1000
+g i b c d a h e f g
+
+[0;34mNumber of nodes: 10, Permutations: 3628800[0m
+[0;32mFinished test case: test_cases/10_nodes.txt. Runtime: 3 seconds.[0m
+22.8000
+f c d i h b j g a e f
+
+[0;34mNumber of nodes: 11, Permutations: 39916800[0m
