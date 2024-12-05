@@ -53,32 +53,10 @@
 # Cooling schedule (how the probability of accepting worse solutions decreases over iterations).
 import random
 import sys
-
-def greedy_tour(graph, start, vertices):  # roughly n runtime
-    tour = [start]
-    total_weight = 0
-    current = start
-    visited = {current}
-    while len(tour) < vertices:  # runs n times
-        # closest unvisited node
-        next, weight = min(
-            ((node, graph[current][node]) for node in range(vertices) if node not in visited),
-            key=lambda x: x[1]
-        )
-        print(current, next, weight)
-        tour.append(next)
-        visited.add(next)
-        total_weight += weight
-        current = next
-
-    # back to starting node
-    total_weight += graph[current][start]
-    tour.append(start)
-
-    return tour, total_weight
+import time
 
 
-def random_tour(graph, vertices):
+def random_tour(graph, vertices):  # O(n)
     tour = list(range(vertices))
     random.shuffle(tour)  # shuffles the vertices to get a random order
     tour.append(tour[0])  # back to start
@@ -121,46 +99,6 @@ def adjust(tour, graph, weight, vertices):
 
     return best_tour, best_weight
 
-"""
-def adjust(tour, graph, weight, vertices):
-    # Perform edge swaps (2-opt optimization) to find a better tour
-    best_tour = tour[:]
-    best_weight = weight
-    improved = True
-
-    while improved:
-        improved = False
-        for i in range(1, len(tour) - 2):  # Avoid the start and end points
-            for j in range(i + 1, len(tour) - 1):
-                # Generate a new tour by reversing the segment between edges i and j
-                new_tour = best_tour[:i] + best_tour[i:j+1][::-1] + best_tour[j+1:]
-                # new_weight = calculate_tour_weight(new_tour, graph)
-                new_weight = calculate_tour_weight_incremental(tour, graph, weight, i, j)
-
-                # Check if the new tour is better
-                if new_weight < best_weight:
-                    best_tour = new_tour
-                    best_weight = new_weight
-                    improved = True
-
-    return best_tour, best_weight
-"""
-
-
-"""
-def calculate_tour_weight(tour, graph):
-    weight = 0
-    # print(f"Tour: {tour}")
-    # print(f"Graph: {graph}")
-    for i in range(len(tour) - 1):
-        u = tour[i]
-        v = tour[i + 1]
-        if u not in graph or v not in graph[u]:
-            raise ValueError(f"Invalid edge ({u}, {v}) in the tour.")
-        weight += graph[u][v]
-    return weight
-"""
-
 
 def calculate_tour_weight_incremental(tour, graph, weight, i, j):
     # get rid of old edges
@@ -195,11 +133,12 @@ def main():
 
     best_weight = float('inf')
     best_tour = None
-
-    for _ in range(10):  # run this many iterations
-        start = random.choice(list(graph))
-        # tour, weight = greedy_tour(graph, start, vertices)  #generates a random tour using a greedy approach
-
+    start_time = time.time()
+    counter = 0
+    # if file is too big to run in 45 seconds, cap it at that time
+    while not (time.time() - start_time > 45 or counter > vertices):
+        counter += 1
+        
         tour, weight = random_tour(graph, vertices)
         tour, weight = adjust(tour, graph, weight, vertices) 
         if weight < best_weight:
