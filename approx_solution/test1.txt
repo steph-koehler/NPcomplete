@@ -1,8 +1,29 @@
-4 6
-A B 1.5
-A C 2.0
-A D 2.5
-B C 1.0
-B D 3.0
-C D 1.5
-
+8 28
+A B 4
+A C 8
+A D 3
+A E 6
+A F 7
+A G 5
+A H 2
+B C 6
+B D 5
+B E 8
+B F 9
+B G 3
+B H 4
+C D 2
+C E 7
+C F 4
+C G 5
+C H 3
+D E 8
+D F 6
+D G 7
+D H 4
+E F 3
+E G 5
+E H 6
+F G 4
+F H 7
+G H 3

@@ -65,6 +65,7 @@ def greedy_tour(graph, start, vertices):  # roughly n runtime
             ((node, graph[current][node]) for node in range(vertices) if node not in visited),
             key=lambda x: x[1]
         )
+        print(current, next, weight)
         tour.append(next)
         visited.add(next)
         total_weight += weight
@@ -77,14 +78,28 @@ def greedy_tour(graph, start, vertices):  # roughly n runtime
     return tour, total_weight
 
 
+def random_tour(graph, vertices):
+    tour = list(range(vertices))
+    random.shuffle(tour)  # shuffles the vertices to get a random order
+    tour.append(tour[0])  # back to start
+
+    total_weight = sum(graph[tour[i]][tour[i+1]] for i in range(vertices))
+    #print(f"rand: {total_weight}")
+
+    return tour, total_weight
+
+
 def adjust(tour, graph, weight, vertices):
-    if vertices > 100 :
+    if vertices > 500 :
         sample_fraction = 0.2
+    elif vertices > 200 :
+        sample_fraction = 0.5
     else :
         sample_fraction = 1.0
 
     best_tour = tour[:]
     best_weight = weight
+    # print(f"adjust: {best_weight}")
     improved = True
     n = len(tour)
 
@@ -92,10 +107,12 @@ def adjust(tour, graph, weight, vertices):
         improved = False
         # subset of edge pairs
         all_pairs = [(i, j) for i in range(1, n - 2) for j in range(i + 1, n - 1)]
+        # print(f"all pairs: {all_pairs}")
         sampled_pairs = random.sample(all_pairs, int(len(all_pairs) * sample_fraction))
+
         for i, j in sampled_pairs: # runs n or 20% of n times
             new_tour = best_tour[:i] + best_tour[i:j+1][::-1] + best_tour[j+1:]
-            new_weight = calculate_tour_weight_incremental(new_tour, graph, weight, i, j)
+            new_weight = calculate_tour_weight_incremental(tour, graph, weight, i, j)
             # check if the new tour is better
             if new_weight < best_weight:
                 best_tour = new_tour
@@ -103,6 +120,46 @@ def adjust(tour, graph, weight, vertices):
                 improved = True
 
     return best_tour, best_weight
+
+"""
+def adjust(tour, graph, weight, vertices):
+    # Perform edge swaps (2-opt optimization) to find a better tour
+    best_tour = tour[:]
+    best_weight = weight
+    improved = True
+
+    while improved:
+        improved = False
+        for i in range(1, len(tour) - 2):  # Avoid the start and end points
+            for j in range(i + 1, len(tour) - 1):
+                # Generate a new tour by reversing the segment between edges i and j
+                new_tour = best_tour[:i] + best_tour[i:j+1][::-1] + best_tour[j+1:]
+                # new_weight = calculate_tour_weight(new_tour, graph)
+                new_weight = calculate_tour_weight_incremental(tour, graph, weight, i, j)
+
+                # Check if the new tour is better
+                if new_weight < best_weight:
+                    best_tour = new_tour
+                    best_weight = new_weight
+                    improved = True
+
+    return best_tour, best_weight
+"""
+
+
+"""
+def calculate_tour_weight(tour, graph):
+    weight = 0
+    # print(f"Tour: {tour}")
+    # print(f"Graph: {graph}")
+    for i in range(len(tour) - 1):
+        u = tour[i]
+        v = tour[i + 1]
+        if u not in graph or v not in graph[u]:
+            raise ValueError(f"Invalid edge ({u}, {v}) in the tour.")
+        weight += graph[u][v]
+    return weight
+"""
 
 
 def calculate_tour_weight_incremental(tour, graph, weight, i, j):
@@ -141,8 +198,9 @@ def main():
 
     for _ in range(10):  # run this many iterations
         start = random.choice(list(graph))
-        tour, weight = greedy_tour(graph, start, vertices)  #generates a random tour using a greedy approach
-        # tour, weight = rand_tour(graph, vertices)
+        # tour, weight = greedy_tour(graph, start, vertices)  #generates a random tour using a greedy approach
+
+        tour, weight = random_tour(graph, vertices)
         tour, weight = adjust(tour, graph, weight, vertices) 
         if weight < best_weight:
             best_weight = weight
