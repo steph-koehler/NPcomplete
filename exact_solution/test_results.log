@@ -1,8 +1,8 @@
-[0;32mFinished test case: test_cases/10_nodes.txt. Runtime: 3 seconds.[0m
-24.5000
-e f g j i h a c b d e
+[0;32mFinished test case: test_cases/10_nodes.txt. Runtime: 1 seconds.[0m
+29.7000
+i h g f e d c b a j i
 
-[0;32mFinished test case: test_cases/11_nodes.txt. Runtime: 39 seconds.[0m
-25.3000
-c b a g f e d k j i h c
+[0;32mFinished test case: test_cases/11_nodes.txt. Runtime: 6 seconds.[0m
+31.4000
+b c d e f g h i j k a b
 
