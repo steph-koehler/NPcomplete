@@ -1,22 +1,3 @@
-[0;34mNumber of nodes: 3, Permutations: 6[0m
-[0;32mFinished test case: test_cases/03_nodes.txt. Runtime: 0 seconds.[0m
-12.6000
-a c b a
-
-[0;34mNumber of nodes: 6, Permutations: 720[0m
-[0;32mFinished test case: test_cases/06_nodes.txt. Runtime: 0 seconds.[0m
-14.0000
-b a f e d c b
-
-[0;34mNumber of nodes: 7, Permutations: 5040[0m
-[0;32mFinished test case: test_cases/07_nodes.txt. Runtime: 0 seconds.[0m
-17.1000
-a e d b c f g a
-
-[0;34mNumber of nodes: 8, Permutations: 40320[0m
-[0;32mFinished test case: test_cases/08_nodes.txt. Runtime: 0 seconds.[0m
-18.1000
-f e a b c d h g f
 
 [0;34mNumber of nodes: 9, Permutations: 362880[0m
 [0;32mFinished test case: test_cases/09_Nodes.txt. Runtime: 0 seconds.[0m
