@@ -3,6 +3,9 @@
 # Directory containing the test cases
 TEST_CASE_DIR="test_cases"
 
+# Specific test file to run
+TEST_FILE="$TEST_CASE_DIR/1000_nodes.txt"
+
 # Python script to run
 PROGRAM="cs412_tsp_approx.py"  # Replace with the actual filename of your Python program
 
@@ -16,14 +19,19 @@ if [[ ! -f "$PROGRAM" ]]; then
   exit 1
 fi
 
+# Check if the test file exists
+if [[ ! -f "$TEST_FILE" ]]; then
+  echo "Error: Test file '$TEST_FILE' not found in $TEST_CASE_DIR!"
+  exit 1
+fi
 
-if [[ -f "$test_cases/1000_nodes.txt" ]]; then
-TEST_NAME=$(basename "$test_cases/1000_nodes.txt")  # Get the test case name
+# Run the specific test file
+TEST_NAME=$(basename "$TEST_FILE")  # Get the test case name
 echo "Running test case: $TEST_NAME"
 
 # Time the program execution
 START_TIME=$(date +%s.%N)
-python3 "$PROGRAM" < "$test_cases/1000_nodes.txt" > "$RESULTS_DIR/$TEST_NAME.out"
+python3 "$PROGRAM" < "$TEST_FILE" > "$RESULTS_DIR/$TEST_NAME.out"
 END_TIME=$(date +%s.%N)
 
 # Calculate elapsed time
@@ -32,6 +40,5 @@ echo "Test case $TEST_NAME completed in $ELAPSED_TIME seconds"
 
 # Save timing information
 echo "$TEST_NAME: $ELAPSED_TIME seconds" >> "$RESULTS_DIR/timing.log"
-fi
 
-echo "All test cases processed. Results and timing information saved in $RESULTS_DIR."
+echo "Test case processed. Results and timing information saved in $RESULTS_DIR."
