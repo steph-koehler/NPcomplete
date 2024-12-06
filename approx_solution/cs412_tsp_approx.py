@@ -1,118 +1,64 @@
-# file for approx solution
-# not optimal--much faster runtime complexity class
-
-# something greedy with a graph
-    # two for-loops once you have the edges
-
-
-
-# Develop Python code that provides a reasonable approximation of the solution. 
-# Your approximation must run in polynomial time and process large problems (n > 1000) 
-# quickly. Some popular strategies are:
-
-# Make greedy local choices, breaking ties randomly
-# utilize randomness coupled with an anytime algorithm
-
-# Your program must execute without arguments (so that it works on gradescope), 
-# but you can incorporate optional command line arguments to augment the function 
-# of your program (for example, output wall clock timings or override the runtime for 
-# an anytime approach).
-
-
-# start at random nodes and run a greedy approach. 
-# repeat this multiple times while under a certain time limit and return the best greedy approach?
-
-# input will always be a complete graph
-
-
-# way to prove: known that not-complete graph is np-complete. how can you prove that a complete graph is also np-complete. you can add edges with infinite weight. Not used for this tho 
-
-# Ask:
-# is the difference that i repeat multiple times using a random starting point each time and select the best
-# and macy runs it once using a given starting node?
-
-
-# dont use 
-
-# start at vert a and end at a, 
-
-# use iterative improvement. make small changes at a time. just see if making random changes make the cost better. there are k^2 swaps.
-# drives down to some minimum value. 
-# pick a set amount of time that we will be runnign this over. Drop enough random starts.
-
-
 # use simulated annealing
-# How it works:
-# Start with a random solution (tour) and iteratively make small random modifications.
-# If a new solution has a shorter path, accept it.
-# If it's worse, accept it with a probability that decreases over time.
-# Why it works:
-# It balances exploration (finding new paths) and exploitation (improving on known paths).
-# Key Parameters:
-# Initial temperature
-# Cooling schedule (how the probability of accepting worse solutions decreases over iterations).
 import random
 import sys
+import time
 
-def greedy_tour(graph, start, vertices):  # roughly n runtime
-    tour = [start]
-    total_weight = 0
-    current = start
-    visited = {current}
-    while len(tour) < vertices:  # runs n times
-        # closest unvisited node
-        next, weight = min(
-            ((node, graph[current][node]) for node in range(vertices) if node not in visited),
-            key=lambda x: x[1]
-        )
-        print(current, next, weight)
-        tour.append(next)
-        visited.add(next)
-        total_weight += weight
-        current = next
-
-    # back to starting node
-    total_weight += graph[current][start]
-    tour.append(start)
-
-    return tour, total_weight
-
-
-def random_tour(graph, vertices):
+"""
+def random_tour(graph, vertices):  # O(n)
     tour = list(range(vertices))
     random.shuffle(tour)  # shuffles the vertices to get a random order
     tour.append(tour[0])  # back to start
 
-    total_weight = sum(graph[tour[i]][tour[i+1]] for i in range(vertices))
-    #print(f"rand: {total_weight}")
+    # total_weight = sum(graph[tour[i]][tour[i+1]] for i in range(vertices))
+    total_weight = calculate_tour_weight(tour, graph)
 
     return tour, total_weight
+"""
+
+def nearest_neighbor_tour(graph, vertices):  # n^2
+    visited = [False] * vertices
+    start = random.choice(list(graph))
+    tour = [start]  # start at vertex 0
+    visited[start] = True
+    for _ in range(vertices - 1):
+        last = tour[-1]
+        next_vertex = min(
+            (v for v in range(vertices) if not visited[v]),
+            key=lambda v: graph[last][v],
+        )
+        tour.append(next_vertex)
+        visited[next_vertex] = True
+    tour.append(tour[0])  # return to start
+    total_weight = calculate_tour_weight(tour, graph)
+    return tour, total_weight
+
 
 
 def adjust(tour, graph, weight, vertices):
     if vertices > 500 :
-        sample_fraction = 0.2
+        sample_fraction = 0.3
     elif vertices > 200 :
-        sample_fraction = 0.5
+        sample_fraction = 0.6
     else :
         sample_fraction = 1.0
 
     best_tour = tour[:]
     best_weight = weight
-    # print(f"adjust: {best_weight}")
     improved = True
     n = len(tour)
-
     while improved:
         improved = False
-        # subset of edge pairs
         all_pairs = [(i, j) for i in range(1, n - 2) for j in range(i + 1, n - 1)]
-        # print(f"all pairs: {all_pairs}")
         sampled_pairs = random.sample(all_pairs, int(len(all_pairs) * sample_fraction))
 
-        for i, j in sampled_pairs: # runs n or 20% of n times
-            new_tour = best_tour[:i] + best_tour[i:j+1][::-1] + best_tour[j+1:]
-            new_weight = calculate_tour_weight_incremental(tour, graph, weight, i, j)
+        for i, j in sampled_pairs:  # runs as a percent of the input times
+            new_tour = best_tour[:]  # create a copy of best_tour
+            # swap at positions i and j
+            temp = new_tour[i] 
+            new_tour[i] = new_tour[j]
+            new_tour[j] = temp           
+            new_weight = calculate_tour_weight_incremental(new_tour, graph, weight, i, j) # this changed
+    
             # check if the new tour is better
             if new_weight < best_weight:
                 best_tour = new_tour
@@ -120,46 +66,6 @@ def adjust(tour, graph, weight, vertices):
                 improved = True
 
     return best_tour, best_weight
-
-"""
-def adjust(tour, graph, weight, vertices):
-    # Perform edge swaps (2-opt optimization) to find a better tour
-    best_tour = tour[:]
-    best_weight = weight
-    improved = True
-
-    while improved:
-        improved = False
-        for i in range(1, len(tour) - 2):  # Avoid the start and end points
-            for j in range(i + 1, len(tour) - 1):
-                # Generate a new tour by reversing the segment between edges i and j
-                new_tour = best_tour[:i] + best_tour[i:j+1][::-1] + best_tour[j+1:]
-                # new_weight = calculate_tour_weight(new_tour, graph)
-                new_weight = calculate_tour_weight_incremental(tour, graph, weight, i, j)
-
-                # Check if the new tour is better
-                if new_weight < best_weight:
-                    best_tour = new_tour
-                    best_weight = new_weight
-                    improved = True
-
-    return best_tour, best_weight
-"""
-
-
-"""
-def calculate_tour_weight(tour, graph):
-    weight = 0
-    # print(f"Tour: {tour}")
-    # print(f"Graph: {graph}")
-    for i in range(len(tour) - 1):
-        u = tour[i]
-        v = tour[i + 1]
-        if u not in graph or v not in graph[u]:
-            raise ValueError(f"Invalid edge ({u}, {v}) in the tour.")
-        weight += graph[u][v]
-    return weight
-"""
 
 
 def calculate_tour_weight_incremental(tour, graph, weight, i, j):
@@ -172,6 +78,14 @@ def calculate_tour_weight_incremental(tour, graph, weight, i, j):
 
     return weight
 
+def calculate_tour_weight(tour, graph):
+    weight = 0
+    for i in range(len(tour) - 1):
+        u = tour[i]
+        v = tour[i + 1]
+        weight += graph[u][v]
+    return weight
+
 
 def main():
     data = sys.stdin.read().strip().split("\n")
@@ -180,7 +94,7 @@ def main():
     vertex_map = {}
     rev_map = {}
 
-    for line in data[1:]:
+    for line in data[1:]:  # O(n^2)
         u, v, weight = line.strip().split()
         weight = float(weight)
         if u not in vertex_map:
@@ -195,18 +109,17 @@ def main():
 
     best_weight = float('inf')
     best_tour = None
-
-    for _ in range(10):  # run this many iterations
-        start = random.choice(list(graph))
-        # tour, weight = greedy_tour(graph, start, vertices)  #generates a random tour using a greedy approach
-
-        tour, weight = random_tour(graph, vertices)
+    start_time = time.time()
+    # run in 45 seconds
+    while time.time() - start_time < 45:
+        tour, weight = nearest_neighbor_tour(graph, vertices)
         tour, weight = adjust(tour, graph, weight, vertices) 
         if weight < best_weight:
             best_weight = weight
             best_tour = tour
 
-    print(f"{best_weight:.4f}")
+    print(f"{calculate_tour_weight(best_tour, graph):.4f}")
+
     mapped_tour = [rev_map[vertex] for vertex in best_tour]
     print(' '.join(mapped_tour))
 
