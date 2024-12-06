@@ -1,0 +1,51 @@
+def nearest_neighbor_tour(graph, num_vertices)
+    start = random starting node
+    visited_list = [false]
+    tour = [start]
+    visited_list[start] = true
+    for 0...num_vertices - 1
+        next_vertex = nearest unvisited neighbor
+        tour += next_vertex
+        visited_list[next_vertex] = true
+    tour += start
+    weight = calculate_tour_weight()
+    return tour, weight
+
+def adjust(tour, graph, weight, num_vertices)
+    decimal = float based on what percent vertices are being adjusted
+    improved = true
+    while improved
+    improved = false
+        all pairs = list of all pairs of vertices that have an edge between them
+        sample = random sample of all pairs (length is decimal * len of all pairs)
+        for i,j in sample
+            new_tour = swap i and j
+            new_weight = calculate_tour_weight()
+
+            if new_weight < best weight
+                best_weight = new_weight
+                best_tour = new_tour
+                improved = true
+    return best_tour, best_weight
+
+
+
+main()
+    parse input into num_vertices integer variable and graph dictionary
+    start timer
+    while timer < 45 seconds:
+        tour, weight = nearest_neighbor_tour(graph, num_vertices)
+        tour, weight = adjust(tour, graph, weight, num_vertices)
+        if weight < best_weight
+            best_weight = weight
+            best_tour = tour
+
+    print best_weight
+    print best_tour
+
+
+
+
+
+/opt/homebrew/bin/python3 /Users/steph/Documents/Fall2024/CS412/finalProj/NPcomplete/approx_solution/cs412_tsp_approx.py < /Users/steph/Documents/Fall2024/CS412/finalProj/NPcomplete/part_E/1000v_test.txt
+1039.0764

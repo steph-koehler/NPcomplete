@@ -1,7 +1,0 @@
-3 3
-a b 3.0
-b c 4.2
-a c 5.4
-
-/opt/homebrew/bin/python3 /Users/steph/Documents/Fall2024/CS412/finalProj/NPcomplete/approx_solution/cs412_tsp_approx.py < /Users/steph/Documents/Fall2024/CS412/finalProj/NPcomplete/part_E/1000v_test.txt
-1039.0764

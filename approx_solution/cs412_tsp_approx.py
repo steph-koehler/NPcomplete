@@ -2,6 +2,7 @@
 import random
 import sys
 import time
+import matplotlib.pyplot as plt
 
 """
 def random_tour(graph, vertices):  # O(n)
@@ -86,6 +87,23 @@ def calculate_tour_weight(tour, graph):
         weight += graph[u][v]
     return weight
 
+"""
+def plot_results(time_quality, best_cost, variance, filename="approx_plot.png"):
+    times, qualities = zip(*time_quality)
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(times, qualities, marker='o', label='Best Cost Over Time')
+    plt.axhline(y=best_cost, color='r', linestyle='--', label=f'Final Best Cost ({best_cost:.4f})')
+    plt.title(f'TSP MST Approximation: Quality vs Time\nVariance = {variance:.4f}')
+    plt.xlabel('Time (seconds)')
+    plt.ylabel('Cost (Quality)')
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+    plt.savefig(filename)
+    print(f"Plot saved to {filename}")
+"""
 
 def main():
     data = sys.stdin.read().strip().split("\n")
@@ -118,10 +136,13 @@ def main():
             best_weight = weight
             best_tour = tour
 
-    print(f"{calculate_tour_weight(best_tour, graph):.4f}")
+    best_weight = calculate_tour_weight(best_tour, graph)
+    print(f"{best_weight:.4f}")
 
     mapped_tour = [rev_map[vertex] for vertex in best_tour]
     print(' '.join(mapped_tour))
+
+    # plot_results(time.time(), best_weight, 0, filename="approx_plot.png")
 
 
 if __name__ == '__main__':
