@@ -11,23 +11,22 @@ def nearest_neighbor_tour(graph, num_vertices)
     weight = calculate_tour_weight()
     return tour, weight
 
-def adjust(tour, graph, weight, num_vertices)
-    decimal = float based on what percent vertices are being adjusted
+
+def adjust(tour, graph, weight)
     improved = true
-    while improved
-    improved = false
-        all pairs = list of all pairs of vertices that have an edge between them
-        sample = random sample of all pairs (length is decimal * len of all pairs)
-        for i,j in sample
+    n = tour length
+    for i in range 1 - n-2
+        while improved
+            improved = false
+            j = random number between 1 and n-2
+            check i != j
             new_tour = swap i and j
             new_weight = calculate_tour_weight()
-
             if new_weight < best weight
                 best_weight = new_weight
                 best_tour = new_tour
                 improved = true
     return best_tour, best_weight
-
 
 
 main()
@@ -42,83 +41,3 @@ main()
 
     print best_weight
     print best_tour
-
-
-
-
-
-/opt/homebrew/bin/python3 /Users/steph/Documents/Fall2024/CS412/finalProj/NPcomplete/approx_solution/cs412_tsp_approx.py < /Users/steph/Documents/Fall2024/CS412/finalProj/NPcomplete/part_E/1000v_test.txt
-1039.0764
-
-#!/bin/bash
-
-# Directory containing the test cases
-TEST_CASE_DIR= "../exact_solution/test_cases"  # "test_cases"
-
-# Python script to run
-PROGRAM="cs412_tsp_approx.py"  # Replace with the actual filename of your Python program
-
-# Output directory for results
-RESULTS_DIR="test_results"
-mkdir -p $RESULTS_DIR
-
-# Check if the program exists
-if [[ ! -f "$PROGRAM" ]]; then
-  echo "Error: Python program '$PROGRAM' not found!"
-  exit 1
-fi
-
-# Iterate through each test case in the directory
-for TEST_FILE in "$TEST_CASE_DIR"/*; do
-  if [[ -f "$TEST_FILE" ]]; then
-    TEST_NAME=$(basename "$TEST_FILE")  # Get the test case name
-    echo "Running test case: $TEST_NAME"
-    
-    # Time the program execution
-    START_TIME=$(date +%s.%N)
-    python3 "$PROGRAM" < "$TEST_FILE" > "$RESULTS_DIR/$TEST_NAME.out"
-    END_TIME=$(date +%s.%N)
-    
-    # Calculate elapsed time
-    ELAPSED_TIME=$(echo "$END_TIME - $START_TIME" | bc)
-    echo "Test case $TEST_NAME completed in $ELAPSED_TIME seconds"
-    
-    # Save timing information
-    echo "$TEST_NAME: $ELAPSED_TIME seconds" >> "$RESULTS_DIR/timing.log"
-  fi
-done
-
-# Generate a plot for the timing information
-PLOT_SCRIPT="$RESULTS_DIR/plot_times.py"
-
-# Create a Python script to plot the timing data
-cat <<EOF > $PLOT_SCRIPT
-import matplotlib.pyplot as plt
-
-# Read timing log
-with open("$RESULTS_DIR/timing.log", "r") as f:
-    data = [line.strip().split(":") for line in f]
-
-# Extract test names and times
-test_names = [d[0] for d in data]
-times = [float(d[1].split()[0]) for d in data]
-
-# Create the plot
-plt.figure(figsize=(10, 6))
-plt.bar(test_names, times, color='skyblue')
-plt.xlabel('Test Case', fontsize=12)
-plt.ylabel('Execution Time (seconds)', fontsize=12)
-plt.title('Execution Times of Test Cases', fontsize=14)
-plt.xticks(rotation=45, ha='right', fontsize=10)
-plt.tight_layout()
-
-# Save the plot
-plot_path = "$RESULTS_DIR/execution_times.png"
-plt.savefig(plot_path)
-print(f"Plot saved to {plot_path}")
-EOF
-
-# Run the plotting script
-python3 $PLOT_SCRIPT
-
-echo "All test cases processed. Results, timing information, and plot saved in $RESULTS_DIR."

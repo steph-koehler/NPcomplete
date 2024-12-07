@@ -18,16 +18,17 @@ This will:
 
 
 Run Non-Optimal Test Case:
+   Execute the following command from the terminal within the approx_solution directory:
 
 chmod +x run_nonopt_cases.sh
 ./run_nonopt_cases.sh
 
 
 Run Wall Clock
+   Execute the following command from the terminal within the approx_solution directory:
 
 chmod +x compute_approx_wallclock.sh
 ./compute_approx_wallclock.sh
-
 
 
 
